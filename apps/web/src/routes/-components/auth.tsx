@@ -61,6 +61,18 @@ export const Auth = () => {
         >
           {isSignUp ? "Sign Up" : "Sign In"}
         </button>
+
+        {isSignUp  ? (
+            <div>
+                <input type="radio" id="candidate" name="user_type" value="Candidate" />
+                <label htmlFor="candidate">Candidate</label>
+                <input type="radio" id="employer" name="user_type" value="Employer" />
+                <label htmlFor="employer">Employer</label>
+                <br />
+            </div>
+        ) : (<></>) }
+        
+
       </form>
       <button
         onClick={() => {
