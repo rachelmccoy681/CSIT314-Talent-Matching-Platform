@@ -57,6 +57,10 @@ function RootComponent() {
                 <NavLink to="/login">Login</NavLink>
             )}
         </div>
+
+            
+
+
         <Outlet />
         <TanStackRouterDevtools />
     </div>
