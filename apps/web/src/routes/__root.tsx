@@ -1,6 +1,9 @@
 import { Outlet,  createRootRouteWithContext, useLocation } from '@tanstack/react-router'
 import { NavLink } from './-components/nav-link'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { Auth } from './-components/auth';
+import { supabase } from '@/utils/supabase';
+import { useEffect, useState } from 'react';
 
 // Test roles
 export type UserRole = 'admin' | 'client' | null;
@@ -22,6 +25,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     component: RootComponent
 });
 
+
+
 function RootComponent() {
 
     const { logout, isAuthenticated, isAdmin, isClient } =
@@ -29,40 +34,77 @@ function RootComponent() {
 
     const navigate = Route.useNavigate();
     const location = useLocation();
+
+    const [session, setSession] = useState(null)
+    const fetchSession = async () => {
+        const currentSession = await supabase.auth.getSession()
+        console.log(currentSession)
+        setSession(currentSession.data.session)
+    }
+
+    useEffect(() => {
+        fetchSession();
+
+        const {data: authListener} = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setSession(session);
+            }
+        );
+
+        return () => {
+            authListener.subscription.unsubscribe();
+        }
+    }, [])
+
+    const authLogout = async () => {
+        await supabase.auth.signOut()
+    }
     
   return (
-    <div className="container mx-auto max-w-xl">
-        <div className="space-x-2">
+    <>
+        {session ? (
         
-            <NavLink to='/'>Main Page</NavLink>
-            <NavLink to='/about'>About Us</NavLink>
-            <NavLink to='/contact-us'>Contact Us</NavLink>
-            <NavLink to='/categories'>Categories</NavLink>
-            <NavLink to='/search'>Search</NavLink>
-            <NavLink to='/{-$locale}/blog'>Blog</NavLink>
-            {isClient && <NavLink to="/client">Account</NavLink>}
-            {isAdmin && <NavLink to="/admin">Admin</NavLink>}
-            {isAuthenticated ? (
-                <button
-                    className="button"
-                    onClick={() => {
-                        logout();
-                        navigate({ to: "/login", search: { redirect: location.href } });
-                    }}
-                >
-                    Sign out
-                </button>
-            
-            ) : (
-                <NavLink to="/login">Login</NavLink>
-            )}
-        </div>
+            <div className="container mx-auto max-w-xl">
+                <div className="space-x-2">
+                
+                    <NavLink to='/'>Main Page</NavLink>
+                    <NavLink to='/about'>About Us</NavLink>
+                    <NavLink to='/contact-us'>Contact Us</NavLink>
+                    <NavLink to='/categories'>Categories</NavLink>
+                    <NavLink to='/search'>Search</NavLink>
+                    <NavLink to='/{-$locale}/blog'>Blog</NavLink>
+                    {isClient && <NavLink to="/client">Account</NavLink>}
+                    {isAdmin && <NavLink to="/admin">Admin</NavLink>}
+                    
+                    <button
+                        className="button"
+                        onClick={authLogout}
+                    >Log Out</button>
 
-            
+                    {isAuthenticated ? (
+                        <button
+                            className="button"
+                            onClick={() => {
+                                logout();
+                                navigate({ to: "/login", search: { redirect: location.href } });
+                            }}
+                        >
+                            Sign out
+                        </button>
+                    
+                    ) : (
+                        <NavLink to="/login">Login</NavLink>
+                    )}
 
+                </div>
 
-        <Outlet />
-        <TanStackRouterDevtools />
-    </div>
+                <Outlet />
+                <TanStackRouterDevtools />
+                
+            </div>
+        ) : (
+        <Auth />
+        )}
+    </>
   )
 }
