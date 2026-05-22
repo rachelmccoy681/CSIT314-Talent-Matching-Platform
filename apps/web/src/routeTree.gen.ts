@@ -13,16 +13,12 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
-import { Route as ContactUsRouteImport } from './routes/contact-us'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ContactUsCountryRouteImport } from './routes/contact-us.$country'
 import { Route as AuthClientRouteRouteImport } from './routes/_auth/client/route'
 import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as publicSearchRouteRouteImport } from './routes/(public)/search/route'
 import { Route as publicCategoriesRouteRouteImport } from './routes/(public)/categories/route'
-import { Route as ContactUsCountryCityRouteImport } from './routes/contact-us.$country.$city'
 import { Route as AuthAdminReportsRouteImport } from './routes/_auth/admin/reports'
 import { Route as AuthChar123LocaleChar125BlogRouteRouteImport } from './routes/_auth/{-$locale}/blog/route'
 import { Route as AuthAdminCategoriesRouteRouteImport } from './routes/_auth/admin/categories/route'
@@ -55,16 +51,6 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactUsRoute = ContactUsRouteImport.update({
-  id: '/contact-us',
-  path: '/contact-us',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -73,11 +59,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ContactUsCountryRoute = ContactUsCountryRouteImport.update({
-  id: '/$country',
-  path: '/$country',
-  getParentRoute: () => ContactUsRoute,
 } as any)
 const AuthClientRouteRoute = AuthClientRouteRouteImport.update({
   id: '/client',
@@ -98,11 +79,6 @@ const publicCategoriesRouteRoute = publicCategoriesRouteRouteImport.update({
   id: '/(public)/categories',
   path: '/categories',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ContactUsCountryCityRoute = ContactUsCountryCityRouteImport.update({
-  id: '/$city',
-  path: '/$city',
-  getParentRoute: () => ContactUsCountryRoute,
 } as any)
 const AuthAdminReportsRoute = AuthAdminReportsRouteImport.update({
   id: '/reports',
@@ -172,8 +148,6 @@ const publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/sign-in': typeof SignInRoute
@@ -182,12 +156,10 @@ export interface FileRoutesByFullPath {
   '/search': typeof publicSearchRouteRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
   '/client': typeof AuthClientRouteRouteWithChildren
-  '/contact-us/$country': typeof ContactUsCountryRouteWithChildren
   '/categories/$categoryId': typeof publicCategoriesCategoryIdRouteRouteWithChildren
   '/admin/categories': typeof AuthAdminCategoriesRouteRouteWithChildren
   '/{-$locale}/blog': typeof AuthChar123LocaleChar125BlogRouteRouteWithChildren
   '/admin/reports': typeof AuthAdminReportsRoute
-  '/contact-us/$country/$city': typeof ContactUsCountryCityRoute
   '/categories/$categoryId/$subcategoryId': typeof publicCategoriesCategoryIdSubcategoryIdRouteRouteWithChildren
   '/{-$locale}/blog/$topicId': typeof AuthChar123LocaleChar125BlogTopicIdRouteRouteWithChildren
   '/categories/$categoryId/$subcategoryId/$productId': typeof publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute
@@ -198,8 +170,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/sign-in': typeof SignInRoute
@@ -208,12 +178,10 @@ export interface FileRoutesByTo {
   '/search': typeof publicSearchRouteRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
   '/client': typeof AuthClientRouteRouteWithChildren
-  '/contact-us/$country': typeof ContactUsCountryRouteWithChildren
   '/categories/$categoryId': typeof publicCategoriesCategoryIdRouteRouteWithChildren
   '/admin/categories': typeof AuthAdminCategoriesRouteRouteWithChildren
   '/{-$locale}/blog': typeof AuthChar123LocaleChar125BlogRouteRouteWithChildren
   '/admin/reports': typeof AuthAdminReportsRoute
-  '/contact-us/$country/$city': typeof ContactUsCountryCityRoute
   '/categories/$categoryId/$subcategoryId': typeof publicCategoriesCategoryIdSubcategoryIdRouteRouteWithChildren
   '/{-$locale}/blog/$topicId': typeof AuthChar123LocaleChar125BlogTopicIdRouteRouteWithChildren
   '/categories/$categoryId/$subcategoryId/$productId': typeof publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute
@@ -226,8 +194,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/sign-in': typeof SignInRoute
@@ -236,12 +202,10 @@ export interface FileRoutesById {
   '/(public)/search': typeof publicSearchRouteRoute
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
   '/_auth/client': typeof AuthClientRouteRouteWithChildren
-  '/contact-us/$country': typeof ContactUsCountryRouteWithChildren
   '/(public)/categories/$categoryId': typeof publicCategoriesCategoryIdRouteRouteWithChildren
   '/_auth/admin/categories': typeof AuthAdminCategoriesRouteRouteWithChildren
   '/_auth/{-$locale}/blog': typeof AuthChar123LocaleChar125BlogRouteRouteWithChildren
   '/_auth/admin/reports': typeof AuthAdminReportsRoute
-  '/contact-us/$country/$city': typeof ContactUsCountryCityRoute
   '/(public)/categories/$categoryId/$subcategoryId': typeof publicCategoriesCategoryIdSubcategoryIdRouteRouteWithChildren
   '/_auth/{-$locale}/blog/$topicId': typeof AuthChar123LocaleChar125BlogTopicIdRouteRouteWithChildren
   '/(public)/categories/$categoryId/$subcategoryId/$productId': typeof publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute
@@ -254,8 +218,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/contact-us'
     | '/home'
     | '/login'
     | '/sign-in'
@@ -264,12 +226,10 @@ export interface FileRouteTypes {
     | '/search'
     | '/admin'
     | '/client'
-    | '/contact-us/$country'
     | '/categories/$categoryId'
     | '/admin/categories'
     | '/{-$locale}/blog'
     | '/admin/reports'
-    | '/contact-us/$country/$city'
     | '/categories/$categoryId/$subcategoryId'
     | '/{-$locale}/blog/$topicId'
     | '/categories/$categoryId/$subcategoryId/$productId'
@@ -280,8 +240,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/contact-us'
     | '/home'
     | '/login'
     | '/sign-in'
@@ -290,12 +248,10 @@ export interface FileRouteTypes {
     | '/search'
     | '/admin'
     | '/client'
-    | '/contact-us/$country'
     | '/categories/$categoryId'
     | '/admin/categories'
     | '/{-$locale}/blog'
     | '/admin/reports'
-    | '/contact-us/$country/$city'
     | '/categories/$categoryId/$subcategoryId'
     | '/{-$locale}/blog/$topicId'
     | '/categories/$categoryId/$subcategoryId/$productId'
@@ -307,8 +263,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
-    | '/about'
-    | '/contact-us'
     | '/home'
     | '/login'
     | '/sign-in'
@@ -317,12 +271,10 @@ export interface FileRouteTypes {
     | '/(public)/search'
     | '/_auth/admin'
     | '/_auth/client'
-    | '/contact-us/$country'
     | '/(public)/categories/$categoryId'
     | '/_auth/admin/categories'
     | '/_auth/{-$locale}/blog'
     | '/_auth/admin/reports'
-    | '/contact-us/$country/$city'
     | '/(public)/categories/$categoryId/$subcategoryId'
     | '/_auth/{-$locale}/blog/$topicId'
     | '/(public)/categories/$categoryId/$subcategoryId/$productId'
@@ -335,8 +287,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  ContactUsRoute: typeof ContactUsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   SignInRoute: typeof SignInRoute
@@ -375,20 +325,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contact-us': {
-      id: '/contact-us'
-      path: '/contact-us'
-      fullPath: '/contact-us'
-      preLoaderRoute: typeof ContactUsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -402,13 +338,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/contact-us/$country': {
-      id: '/contact-us/$country'
-      path: '/$country'
-      fullPath: '/contact-us/$country'
-      preLoaderRoute: typeof ContactUsCountryRouteImport
-      parentRoute: typeof ContactUsRoute
     }
     '/_auth/client': {
       id: '/_auth/client'
@@ -437,13 +366,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories'
       preLoaderRoute: typeof publicCategoriesRouteRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/contact-us/$country/$city': {
-      id: '/contact-us/$country/$city'
-      path: '/$city'
-      fullPath: '/contact-us/$country/$city'
-      preLoaderRoute: typeof ContactUsCountryCityRouteImport
-      parentRoute: typeof ContactUsCountryRoute
     }
     '/_auth/admin/reports': {
       id: '/_auth/admin/reports'
@@ -616,29 +538,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
-interface ContactUsCountryRouteChildren {
-  ContactUsCountryCityRoute: typeof ContactUsCountryCityRoute
-}
-
-const ContactUsCountryRouteChildren: ContactUsCountryRouteChildren = {
-  ContactUsCountryCityRoute: ContactUsCountryCityRoute,
-}
-
-const ContactUsCountryRouteWithChildren =
-  ContactUsCountryRoute._addFileChildren(ContactUsCountryRouteChildren)
-
-interface ContactUsRouteChildren {
-  ContactUsCountryRoute: typeof ContactUsCountryRouteWithChildren
-}
-
-const ContactUsRouteChildren: ContactUsRouteChildren = {
-  ContactUsCountryRoute: ContactUsCountryRouteWithChildren,
-}
-
-const ContactUsRouteWithChildren = ContactUsRoute._addFileChildren(
-  ContactUsRouteChildren,
-)
-
 interface publicCategoriesCategoryIdSubcategoryIdRouteRouteChildren {
   publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute: typeof publicCategoriesCategoryIdSubcategoryIdProductIdRouteRoute
 }
@@ -686,8 +585,6 @@ const publicCategoriesRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  ContactUsRoute: ContactUsRouteWithChildren,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   SignInRoute: SignInRoute,

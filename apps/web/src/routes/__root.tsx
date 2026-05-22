@@ -29,13 +29,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 
 
+
+
 function RootComponent() {
-
-    // const { logout, isAuthenticated, isAdmin, isClient } =
-    //     Route.useRouteContext();
-
-    // const navigate = Route.useNavigate();
-    // const location = useLocation();
 
     // Find out whether the user is logged in
     const [session, setSession] = useState(null)
@@ -66,29 +62,37 @@ function RootComponent() {
     
   return (
     <>
-        {session ? (
-            <NavigationBar />
-        ) : (
+        <div className="container mx-auto max-w-xl">
+            <div className="space-x-2">
+                {session ? (
+                    <NavigationBar />
+                ) : (
+                    <div className="space-x-2">
 
-            <Auth />
-            // <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
+                        <Auth />            
+                    </div>
+                )}
+            </div>
+        </div>
+
+
+            {/* // <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
             //     <h2>Create an account or sign in to an existing account</h2>
-            //     <NavLink
-            //         className="button"
+            //     <NavLink */}
+            {/* //         className="button"
             //         to="/sign-in"
             //         style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
             //     >
             //         Login
-            //     </NavLink>
-            //     <NavLink
-            //         className="button"
+            //     </NavLink> */}
+            {/* //     <NavLink */}
+            {/* //         className="button"
             //         to="/sign-up"
             //         style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
             //     >
             //         Signup
-            //     </NavLink>
-            // </div>
-        )}
+            //     </NavLink> */}
+            {/* // </div> */}
     </>
   )
 }
