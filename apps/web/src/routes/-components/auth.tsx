@@ -5,7 +5,7 @@ export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [full_name, setFullName] = useState("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ export const Auth = () => {
         password,
         options: {
             data: {
-                fullName
+                full_name
             }
         },
 
@@ -101,7 +101,7 @@ export const Auth = () => {
           className="input"
           type="name"
           placeholder="Full Name"
-          value={fullName}
+          value={full_name}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setFullName(e.target.value)
           }
