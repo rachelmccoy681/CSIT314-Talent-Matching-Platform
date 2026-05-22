@@ -1,11 +1,11 @@
 // Root directory. Basically the default page
 
-import { Outlet,  createRootRouteWithContext, useLocation } from '@tanstack/react-router'
-import { NavLink } from './-components/nav-link'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { Auth } from './-components/auth';
 import { supabase } from '@/utils/supabase';
 import { useEffect, useState } from 'react';
+import { NavigationBar } from './-components/navigationbar';
+import { createRootRouteWithContext, Link } from '@tanstack/react-router';
+import { NavLink } from './-components/nav-link';
 
 // Test roles
 export type UserRole = 'admin' | 'client' | null;
@@ -31,11 +31,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
 
-    const { logout, isAuthenticated, isAdmin, isClient } =
-        Route.useRouteContext();
+    // const { logout, isAuthenticated, isAdmin, isClient } =
+    //     Route.useRouteContext();
 
-    const navigate = Route.useNavigate();
-    const location = useLocation();
+    // const navigate = Route.useNavigate();
+    // const location = useLocation();
 
     // Find out whether the user is logged in
     const [session, setSession] = useState(null)
@@ -60,50 +60,34 @@ function RootComponent() {
     }, [])
 
     // Define Logut function (thanks supabase)
-    const authLogout = async () => {
-        await supabase.auth.signOut()
-    }
+    // const authLogout = async () => {
+    //     await supabase.auth.signOut()
+    // }
     
   return (
     <>
         {session ? (
-        
-            <div className="container mx-auto max-w-xl">
-                <div className="space-x-2">
-                
-                    <NavLink to='/'>Home Page</NavLink>
-                    <NavLink to='/search'>Search</NavLink>
-                    {isClient && <NavLink to="/client">Account</NavLink>}
-                    {isAdmin && <NavLink to="/admin">Admin</NavLink>}
-                    
-                    <button
-                        className="button"
-                        onClick={authLogout}
-                    >Log Out</button>
-
-                    {isAuthenticated ? (
-                        <button
-                            className="button"
-                            onClick={() => {
-                                logout();
-                                navigate({ to: "/login", search: { redirect: location.href } });
-                            }}
-                        >
-                            Sign out
-                        </button>
-                    
-                    ) : (
-                        <NavLink to="/login">Login</NavLink>
-                    )}
-
-                </div>
-
-                <Outlet />
-                <TanStackRouterDevtools />
-                
-            </div>
+            <NavigationBar />
         ) : (
-        <Auth />
+
+            <Auth />
+            // <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
+            //     <h2>Create an account or sign in to an existing account</h2>
+            //     <NavLink
+            //         className="button"
+            //         to="/sign-in"
+            //         style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
+            //     >
+            //         Login
+            //     </NavLink>
+            //     <NavLink
+            //         className="button"
+            //         to="/sign-up"
+            //         style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
+            //     >
+            //         Signup
+            //     </NavLink>
+            // </div>
         )}
     </>
   )

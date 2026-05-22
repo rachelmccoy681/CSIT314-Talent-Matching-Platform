@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
@@ -33,6 +35,16 @@ import { Route as AuthAdminCategoriesCategoriesCreateRouteImport } from './route
 import { Route as AuthChar123LocaleChar125BlogTopicIdPostIdRouteRouteImport } from './routes/_auth/{-$locale}/blog/$topicId/$postId/route'
 import { Route as publicCategoriesCategoryIdSubcategoryIdProductIdRouteRouteImport } from './routes/(public)/categories/$categoryId/$subcategoryId/$productId/route'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -164,6 +176,8 @@ export interface FileRoutesByFullPath {
   '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/categories': typeof publicCategoriesRouteRouteWithChildren
   '/search': typeof publicSearchRouteRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
@@ -188,6 +202,8 @@ export interface FileRoutesByTo {
   '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/categories': typeof publicCategoriesRouteRouteWithChildren
   '/search': typeof publicSearchRouteRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
@@ -214,6 +230,8 @@ export interface FileRoutesById {
   '/contact-us': typeof ContactUsRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/(public)/categories': typeof publicCategoriesRouteRouteWithChildren
   '/(public)/search': typeof publicSearchRouteRoute
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
@@ -240,6 +258,8 @@ export interface FileRouteTypes {
     | '/contact-us'
     | '/home'
     | '/login'
+    | '/sign-in'
+    | '/sign-up'
     | '/categories'
     | '/search'
     | '/admin'
@@ -264,6 +284,8 @@ export interface FileRouteTypes {
     | '/contact-us'
     | '/home'
     | '/login'
+    | '/sign-in'
+    | '/sign-up'
     | '/categories'
     | '/search'
     | '/admin'
@@ -289,6 +311,8 @@ export interface FileRouteTypes {
     | '/contact-us'
     | '/home'
     | '/login'
+    | '/sign-in'
+    | '/sign-up'
     | '/(public)/categories'
     | '/(public)/search'
     | '/_auth/admin'
@@ -315,12 +339,28 @@ export interface RootRouteChildren {
   ContactUsRoute: typeof ContactUsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   publicCategoriesRouteRoute: typeof publicCategoriesRouteRouteWithChildren
   publicSearchRouteRoute: typeof publicSearchRouteRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -650,6 +690,8 @@ const rootRouteChildren: RootRouteChildren = {
   ContactUsRoute: ContactUsRouteWithChildren,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   publicCategoriesRouteRoute: publicCategoriesRouteRouteWithChildren,
   publicSearchRouteRoute: publicSearchRouteRoute,
 }
