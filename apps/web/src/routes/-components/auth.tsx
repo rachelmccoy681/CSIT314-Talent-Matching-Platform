@@ -10,9 +10,15 @@ export const Auth = () => {
     e.preventDefault();
 
     if (isSignUp) {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+            data: {
+                full_name: "",
+            }
+        }
+
       });
       if (signUpError) {
         console.error("Error signing up:", signUpError.message);

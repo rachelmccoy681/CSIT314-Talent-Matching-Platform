@@ -1,3 +1,5 @@
+// Root directory. Basically the default page
+
 import { Outlet,  createRootRouteWithContext, useLocation } from '@tanstack/react-router'
 import { NavLink } from './-components/nav-link'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
@@ -35,6 +37,7 @@ function RootComponent() {
     const navigate = Route.useNavigate();
     const location = useLocation();
 
+    // Find out whether the user is logged in
     const [session, setSession] = useState(null)
     const fetchSession = async () => {
         const currentSession = await supabase.auth.getSession()
@@ -56,6 +59,7 @@ function RootComponent() {
         }
     }, [])
 
+    // Define Logut function (thanks supabase)
     const authLogout = async () => {
         await supabase.auth.signOut()
     }
@@ -67,12 +71,8 @@ function RootComponent() {
             <div className="container mx-auto max-w-xl">
                 <div className="space-x-2">
                 
-                    <NavLink to='/'>Main Page</NavLink>
-                    <NavLink to='/about'>About Us</NavLink>
-                    <NavLink to='/contact-us'>Contact Us</NavLink>
-                    <NavLink to='/categories'>Categories</NavLink>
+                    <NavLink to='/'>Home Page</NavLink>
                     <NavLink to='/search'>Search</NavLink>
-                    <NavLink to='/{-$locale}/blog'>Blog</NavLink>
                     {isClient && <NavLink to="/client">Account</NavLink>}
                     {isAdmin && <NavLink to="/admin">Admin</NavLink>}
                     

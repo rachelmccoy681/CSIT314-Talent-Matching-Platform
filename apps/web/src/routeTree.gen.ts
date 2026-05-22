@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -35,6 +36,11 @@ import { Route as publicCategoriesCategoryIdSubcategoryIdProductIdRouteRouteImpo
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactUsRoute = ContactUsRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact-us': typeof ContactUsRouteWithChildren
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/categories': typeof publicCategoriesRouteRouteWithChildren
   '/search': typeof publicSearchRouteRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact-us': typeof ContactUsRouteWithChildren
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/categories': typeof publicCategoriesRouteRouteWithChildren
   '/search': typeof publicSearchRouteRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact-us': typeof ContactUsRouteWithChildren
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/(public)/categories': typeof publicCategoriesRouteRouteWithChildren
   '/(public)/search': typeof publicSearchRouteRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact-us'
+    | '/home'
     | '/login'
     | '/categories'
     | '/search'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact-us'
+    | '/home'
     | '/login'
     | '/categories'
     | '/search'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/about'
     | '/contact-us'
+    | '/home'
     | '/login'
     | '/(public)/categories'
     | '/(public)/search'
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ContactUsRoute: typeof ContactUsRouteWithChildren
+  HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   publicCategoriesRouteRoute: typeof publicCategoriesRouteRouteWithChildren
   publicSearchRouteRoute: typeof publicSearchRouteRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact-us': {
@@ -628,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ContactUsRoute: ContactUsRouteWithChildren,
+  HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   publicCategoriesRouteRoute: publicCategoriesRouteRouteWithChildren,
   publicSearchRouteRoute: publicSearchRouteRoute,
