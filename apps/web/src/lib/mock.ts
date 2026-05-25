@@ -239,7 +239,7 @@ export const MockData: Data = {
   blog: {
     en: [
       {
-        id: "topic1", // Changed from blog1 to topic1
+        id: "topic1",
         name: "Technology",
         posts: [
           {
@@ -256,7 +256,7 @@ export const MockData: Data = {
         ],
       },
       {
-        id: "topic2", // Changed from blog2 to topic2
+        id: "topic2",
         name: "Business",
         posts: [
           {
@@ -274,7 +274,7 @@ export const MockData: Data = {
     ],
     fr: [
       {
-        id: "topic1", // Changed from blog1 to topic1
+        id: "topic1",
         name: "Technologie",
         posts: [
           {
@@ -292,7 +292,7 @@ export const MockData: Data = {
         ],
       },
       {
-        id: "topic2", // Changed from blog2 to topic2
+        id: "topic2",
         name: "Affaires",
         posts: [
           {
@@ -311,7 +311,7 @@ export const MockData: Data = {
     ],
     es: [
       {
-        id: "topic1", // Changed from blog1 to topic1
+        id: "topic1",
         name: "Tecnología",
         posts: [
           {
@@ -329,7 +329,7 @@ export const MockData: Data = {
         ],
       },
       {
-        id: "topic2", // Changed from blog2 to topic2
+        id: "topic2",
         name: "Negocios",
         posts: [
           {
