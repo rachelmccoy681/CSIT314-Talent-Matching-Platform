@@ -161,14 +161,18 @@ function ProfileForm({
             <label className="field-label" htmlFor="resume">
               Resume / CV
             </label>
-            <input
-              id="resume"
-              className="input"
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={(event) => handleResumeUpload(event.target.files?.[0])}
-            />
-            {form.resume_name ? <p className="success-text">Saved resume: {form.resume_name}</p> : null}
+            <label className="file-upload" htmlFor="resume">
+              <span className="file-upload-title">Upload saved resume</span>
+              <span className="file-upload-copy">
+                {form.resume_name || "PDF, DOC, or DOCX"}
+              </span>
+              <input
+                id="resume"
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={(event) => handleResumeUpload(event.target.files?.[0])}
+              />
+            </label>
 
             <label className="field-label" htmlFor="skills">
               Skills

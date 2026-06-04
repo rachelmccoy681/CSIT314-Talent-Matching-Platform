@@ -1,7 +1,9 @@
 import { useAuth } from "@/lib/auth";
 import {
+  fuzzyIncludes,
   getConversationId,
   getJobId,
+  isPremium,
   listCandidates,
   listJobs,
   sendMessage,
@@ -30,11 +32,14 @@ function CandidatesPage() {
   const { jobs, candidates } = Route.useLoaderData();
   const { user, profile } = useAuth();
   const isEmployerAccount = getAccountType(user, profile) === "employer";
+  const premium = isPremium(profile);
   const [selectedJobId, setSelectedJobId] = useState(getJobId(jobs[0]));
   const [query, setQuery] = useState("");
   const [skill, setSkill] = useState("");
   const [education, setEducation] = useState("all");
   const [experience, setExperience] = useState("all");
+  const [workMode, setWorkMode] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("");
 
   const selectedJob = jobs.find((job) => getJobId(job) === selectedJobId) ?? jobs[0];
 
@@ -55,8 +60,8 @@ function CandidatesPage() {
           .join(" ")
           .toLowerCase();
 
-        const matchesQuery = haystack.includes(lowerQuery);
-        const matchesSkill = !lowerSkill || String(candidate.skills ?? "").toLowerCase().includes(lowerSkill);
+        const matchesQuery = fuzzyIncludes(haystack, lowerQuery);
+        const matchesSkill = !lowerSkill || fuzzyIncludes(String(candidate.skills ?? ""), lowerSkill);
         const matchesEducation =
           education === "all" || String(candidate.education ?? "").toLowerCase().includes(education);
         const years = Number(candidate.years_of_experience ?? 0);
@@ -65,15 +70,24 @@ function CandidatesPage() {
           (experience === "entry" && years <= 1) ||
           (experience === "mid" && years >= 2 && years <= 3) ||
           (experience === "senior" && years >= 4);
+        const matchesMode =
+          !premium ||
+          workMode === "all" ||
+          String(candidate.preferred_working_mode ?? "").toLowerCase() === workMode;
+        const matchesLocation =
+          !premium ||
+          !locationFilter.trim() ||
+          fuzzyIncludes(String(candidate.preferred_location ?? ""), locationFilter);
 
-        return matchesQuery && matchesSkill && matchesEducation && matchesExperience;
+        return matchesQuery && matchesSkill && matchesEducation && matchesExperience && matchesMode && matchesLocation;
       })
       .map((candidate) => ({
         candidate,
         score: selectedJob ? scoreCandidateMatch(candidate, selectedJob) : 0,
       }))
       .sort((a, b) => b.score - a.score);
-  }, [candidates, education, experience, query, selectedJob, skill]);
+  }, [candidates, education, experience, locationFilter, premium, query, selectedJob, skill, workMode]);
+  const topCandidates = rankedCandidates.slice(0, 10);
 
   if (!isEmployerAccount) {
     return (
@@ -138,21 +152,54 @@ function CandidatesPage() {
           <option value="mid">2-3 years</option>
           <option value="senior">4+ years</option>
         </select>
+        {premium ? (
+          <>
+            <select className="input" value={workMode} onChange={(event) => setWorkMode(event.target.value)}>
+              <option value="all">All preferred modes</option>
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="on-site">On-site</option>
+            </select>
+            <input
+              className="input"
+              value={locationFilter}
+              onChange={(event) => setLocationFilter(event.target.value)}
+              placeholder="Premium location filter"
+            />
+          </>
+        ) : null}
       </div>
+
+      {!premium ? (
+        <section className="premium-locked">
+          <p className="stat-label">Premium employer tools</p>
+          <p className="muted-text">
+            Upgrade to unlock advanced candidate filters, direct outreach, featured listings, and stronger shortlists.
+          </p>
+        </section>
+      ) : null}
 
       <section className="panel stack">
         <div className="section-header">
           <h2 className="section-title">Top 10 recommended candidates</h2>
-          <span className="pill">{rankedCandidates.length} profiles found</span>
+          <div className="button-row mt-0">
+            {premium ? (
+              <button className="button-secondary" type="button" onClick={() => exportCandidateCsv(topCandidates, selectedJob)}>
+                Export CSV
+              </button>
+            ) : null}
+            <span className="pill">{rankedCandidates.length} profiles found</span>
+          </div>
         </div>
         <div className="candidate-list">
-          {rankedCandidates.slice(0, 10).map(({ candidate, score }, index) => (
+          {topCandidates.map(({ candidate, score }, index) => (
         <CandidateCard
               employerId={user?.id ?? "employer"}
               employerName={profile?.company_name || profile?.full_name || user?.email || "Employer"}
               candidate={candidate}
               job={selectedJob}
               key={candidate.id}
+              premium={premium}
               rank={index + 1}
               score={score}
             />
@@ -163,11 +210,61 @@ function CandidatesPage() {
   );
 }
 
+function exportCandidateCsv(
+  rows: Array<{ candidate: CandidateProfile; score: number }>,
+  job?: JobPosting,
+) {
+  const headers = [
+    "Rank",
+    "Candidate name",
+    "Match score",
+    "Job title",
+    "Education",
+    "Field of study",
+    "Years of experience",
+    "Preferred work mode",
+    "Preferred location",
+    "Skills",
+  ];
+  const csvRows = rows.map(({ candidate, score }, index) => [
+    index + 1,
+    candidate.full_name,
+    `${score}%`,
+    job?.job_title ?? "",
+    candidate.education ?? "",
+    candidate.major_field_of_study ?? "",
+    candidate.years_of_experience ?? "",
+    candidate.preferred_working_mode ?? "",
+    candidate.preferred_location ?? "",
+    candidate.skills ?? "",
+  ]);
+  const csv = [headers, ...csvRows].map((row) => row.map(formatCsvCell).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${slugify(job?.job_title ?? "candidate-shortlist")}-shortlist.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function formatCsvCell(value: unknown) {
+  const text = String(value ?? "");
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 function CandidateCard({
   candidate,
   employerId,
   employerName,
   job,
+  premium,
   rank,
   score,
 }: {
@@ -175,6 +272,7 @@ function CandidateCard({
   employerId: string;
   employerName: string;
   job?: JobPosting;
+  premium: boolean;
   rank: number;
   score: number;
 }) {
@@ -202,7 +300,9 @@ function CandidateCard({
     <article className="candidate-card">
       <div>
         <p className="stat-label">Rank #{rank} for {job?.job_title ?? "selected job"}</p>
-        <h3>{candidate.full_name}</h3>
+        <h3>
+          {candidate.full_name} {premium ? <span className="pill">Premium shortlist</span> : null}
+        </h3>
         <p className="muted-text">
           {candidate.education} - {candidate.major_field_of_study} -{" "}
           {candidate.years_of_experience ?? 0}+ years
@@ -214,9 +314,13 @@ function CandidateCard({
         <p className="stat-value">{score}%</p>
         <p className="stat-label">match</p>
         <p className="muted-text">{candidate.preferred_working_mode} - {candidate.preferred_location}</p>
-        <button className={contacted ? "button-success" : "button-secondary"} type="button" onClick={contactCandidate}>
-          {contacted ? "Message started" : "Contact in app"}
-        </button>
+        {premium ? (
+          <button className={contacted ? "button-success" : "button-secondary"} type="button" onClick={contactCandidate}>
+            {contacted ? "Message started" : "Contact in app"}
+          </button>
+        ) : (
+          <p className="muted-text">Upgrade to contact candidates before they apply.</p>
+        )}
       </aside>
     </article>
   );

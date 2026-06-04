@@ -27,6 +27,12 @@ export type Profile = {
   company_website?: string | null;
   company_description?: string | null;
   company_location?: string | null;
+  membership_tier?: string | null;
+  membership_updated_at?: string | null;
+  job_alert_query?: string | null;
+  job_alert_category?: string | null;
+  job_alert_mode?: string | null;
+  job_alert_experience?: string | null;
   role?: string | null;
   account_type?: string | null;
 };

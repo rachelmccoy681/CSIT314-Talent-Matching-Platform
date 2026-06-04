@@ -21,6 +21,12 @@ alter table public.profiles add column if not exists company_name text;
 alter table public.profiles add column if not exists company_website text;
 alter table public.profiles add column if not exists company_description text;
 alter table public.profiles add column if not exists company_location text;
+alter table public.profiles add column if not exists membership_tier text default 'free';
+alter table public.profiles add column if not exists membership_updated_at timestamptz;
+alter table public.profiles add column if not exists job_alert_query text default '';
+alter table public.profiles add column if not exists job_alert_category text default 'all';
+alter table public.profiles add column if not exists job_alert_mode text default 'all';
+alter table public.profiles add column if not exists job_alert_experience text default 'all';
 alter table public.profiles add column if not exists created_at timestamptz default now();
 alter table public.profiles add column if not exists updated_at timestamptz default now();
 
@@ -103,7 +109,12 @@ begin
     company_name,
     company_website,
     company_description,
-    company_location
+    company_location,
+    membership_tier,
+    job_alert_query,
+    job_alert_category,
+    job_alert_mode,
+    job_alert_experience
   )
   values (
     new.id,
@@ -123,7 +134,12 @@ begin
     new.raw_user_meta_data ->> 'company_name',
     new.raw_user_meta_data ->> 'company_website',
     new.raw_user_meta_data ->> 'company_description',
-    new.raw_user_meta_data ->> 'company_location'
+    new.raw_user_meta_data ->> 'company_location',
+    coalesce(new.raw_user_meta_data ->> 'membership_tier', 'free'),
+    coalesce(new.raw_user_meta_data ->> 'job_alert_query', ''),
+    coalesce(new.raw_user_meta_data ->> 'job_alert_category', 'all'),
+    coalesce(new.raw_user_meta_data ->> 'job_alert_mode', 'all'),
+    coalesce(new.raw_user_meta_data ->> 'job_alert_experience', 'all')
   )
   on conflict (id) do update set
     account_type = excluded.account_type,
@@ -143,6 +159,11 @@ begin
     company_website = excluded.company_website,
     company_description = excluded.company_description,
     company_location = excluded.company_location,
+    membership_tier = excluded.membership_tier,
+    job_alert_query = excluded.job_alert_query,
+    job_alert_category = excluded.job_alert_category,
+    job_alert_mode = excluded.job_alert_mode,
+    job_alert_experience = excluded.job_alert_experience,
     updated_at = now();
 
   return new;
