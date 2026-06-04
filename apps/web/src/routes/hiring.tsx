@@ -262,15 +262,18 @@ function HiringPage() {
               {application.stage === "Offer" || application.stage === "Hired" ? (
                 <div className="action-panel">
                   <h4>HR documents</h4>
-                  <input
-                    className="input"
-                    type="file"
-                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                    onChange={(event) => attachDocument(application.id, event.target.files?.[0])}
-                  />
-                  {documentsByApplication[application.id]?.name ? (
-                    <p className="success-text">Attached: {documentsByApplication[application.id].name}</p>
-                  ) : null}
+                  <label className="file-upload" htmlFor={`hr-document-${application.id}`}>
+                    <span className="file-upload-title">Attach HR document</span>
+                    <span className="file-upload-copy">
+                      {documentsByApplication[application.id]?.name || application.hr_document_name || "PDF, DOCX, or image"}
+                    </span>
+                    <input
+                      id={`hr-document-${application.id}`}
+                      type="file"
+                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                      onChange={(event) => attachDocument(application.id, event.target.files?.[0])}
+                    />
+                  </label>
                   <button className="button-secondary" type="button" onClick={() => sendDocuments(application)}>
                     Send HR document
                   </button>

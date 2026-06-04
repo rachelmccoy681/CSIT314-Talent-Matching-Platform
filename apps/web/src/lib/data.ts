@@ -34,6 +34,11 @@ export type ProfileFormValues = {
   company_website?: string;
   company_description?: string;
   company_location?: string;
+  membership_tier?: string;
+  job_alert_query?: string;
+  job_alert_category?: string;
+  job_alert_mode?: string;
+  job_alert_experience?: string;
 };
 
 const applicationStorageKey = "talentmatch-applications";
@@ -670,6 +675,19 @@ type MatchProfile = {
   years_of_experience?: number | string | null;
 };
 
+export type MembershipTier = "free" | "premium";
+
+export type JobAlertPreferences = {
+  query: string;
+  category: string;
+  mode: string;
+  experience: string;
+};
+
+export function isPremium(profile?: { membership_tier?: string | null } | null) {
+  return profile?.membership_tier === "premium";
+}
+
 export async function listJobs() {
   const { data, error } = await supabase
     .from("job_posting")
@@ -757,9 +775,40 @@ export async function updateProfile(userId: string, values: ProfileFormValues) {
     company_website: values.company_website,
     company_description: values.company_description,
     company_location: values.company_location,
+    membership_tier: values.membership_tier,
+    job_alert_query: values.job_alert_query,
+    job_alert_category: values.job_alert_category,
+    job_alert_mode: values.job_alert_mode,
+    job_alert_experience: values.job_alert_experience,
   };
 
   const { error } = await supabase.from("profiles").upsert(payload);
+  if (error) throw error;
+}
+
+export async function updateMembership(userId: string, tier: MembershipTier) {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      membership_tier: tier,
+      membership_updated_at: new Date().toISOString(),
+    })
+    .eq("id", userId);
+
+  if (error) throw error;
+}
+
+export async function updateJobAlertPreferences(userId: string, values: JobAlertPreferences) {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      job_alert_query: values.query,
+      job_alert_category: values.category,
+      job_alert_mode: values.mode,
+      job_alert_experience: values.experience,
+    })
+    .eq("id", userId);
+
   if (error) throw error;
 }
 
@@ -1068,4 +1117,56 @@ export function scoreCandidateMatch(candidate: CandidateProfile, job: JobPosting
     full_name: candidate.full_name,
     contact_information: candidate.contact_information,
   });
+}
+
+export function fuzzyIncludes(value: string, query: string) {
+  const cleanQuery = query.trim().toLowerCase();
+  if (!cleanQuery) return true;
+
+  const cleanValue = value.toLowerCase();
+  if (cleanValue.includes(cleanQuery)) return true;
+
+  const words = cleanQuery.split(/\s+/).filter(Boolean);
+  return words.every((word) => fuzzyWordMatch(cleanValue, word));
+}
+
+export function fuzzyScore(value: string, query: string) {
+  const cleanQuery = query.trim().toLowerCase();
+  if (!cleanQuery) return 0;
+
+  const cleanValue = value.toLowerCase();
+  if (cleanValue.includes(cleanQuery)) return cleanQuery.length + 20;
+
+  return cleanQuery
+    .split(/\s+/)
+    .filter(Boolean)
+    .reduce((score, word) => score + bestWordScore(cleanValue, word), 0);
+}
+
+function fuzzyWordMatch(value: string, query: string) {
+  return bestWordScore(value, query) >= Math.max(2, Math.floor(query.length * 0.55));
+}
+
+function bestWordScore(value: string, query: string) {
+  const tokens = value.split(/[^a-z0-9+#.]+/).filter(Boolean);
+  return tokens.reduce((best, token) => Math.max(best, similarityScore(token, query)), 0);
+}
+
+function similarityScore(value: string, query: string) {
+  if (!value || !query) return 0;
+  if (value.includes(query)) return query.length + 5;
+
+  let score = 0;
+  let queryIndex = 0;
+
+  for (const char of value) {
+    if (char === query[queryIndex]) {
+      score += 1;
+      queryIndex += 1;
+    }
+    if (queryIndex >= query.length) break;
+  }
+
+  const lengthPenalty = Math.abs(value.length - query.length) * 0.2;
+  return score - lengthPenalty;
 }

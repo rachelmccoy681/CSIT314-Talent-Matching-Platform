@@ -1,8 +1,7 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
 import { supabase } from "../../utils/supabase.ts";
 
 export const Auth = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [full_name, setFullName] = useState("");
@@ -31,7 +30,7 @@ export const Auth = () => {
     const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -58,7 +57,7 @@ export const Auth = () => {
 
   return (
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
-      <h2>{isSignUp ? "Sign Up" : "Sign In"}</h2>
+      <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
             <input
                 className="input"
@@ -221,31 +220,6 @@ export const Auth = () => {
         </button>
 
         </form>
-
-        {/* {isSignUp  ? (
-            <div>
-                <input type="radio" id="candidate" name="user_type" value="Candidate" />
-                <label htmlFor="candidate">Candidate</label>
-                <input type="radio" id="employer" name="user_type" value="Employer" />
-                <label htmlFor="employer">Employer</label>
-                <br />
-            </div>
-        ) : (<></>) } */}
-
-        
-
-        
-
-{/* old version of form. changing button from sign-in to sign-up*/}
-      {/* <button
-        onClick={() => {
-          setIsSignUp(!isSignUp);
-        }}
-        className="button"
-        style={{ padding: "0.5rem 1rem" }}
-      >
-        {isSignUp ? "Switch to Sign In" : "Switch to Sign Up"}
-      </button> */}
     </div>
   );
 };

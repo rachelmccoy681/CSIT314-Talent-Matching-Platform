@@ -1,5 +1,5 @@
 import { useAuth } from "@/lib/auth";
-import { applyToJob, fileToDataUrl, getJobId, hasApplied, listJobs, scoreJobMatch, type JobPosting } from "@/lib/data";
+import { applyToJob, fileToDataUrl, getJobId, hasApplied, isPremium, listJobs, scoreJobMatch, type JobPosting } from "@/lib/data";
 import { getAccountType } from "@/lib/view-mode";
 import { supabase } from "@/utils/supabase";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
@@ -23,6 +23,7 @@ function JobDetailPage() {
   const job = Route.useLoaderData();
   const { user, profile } = useAuth();
   const isEmployer = getAccountType(user, profile) === "employer";
+  const premium = isPremium(profile);
   const jobId = getJobId(job);
   const score = scoreJobMatch(job, profile);
   const [applied, setApplied] = useState(hasApplied(jobId));
@@ -105,6 +106,20 @@ function JobDetailPage() {
             Match score uses the skills, work mode, location, and experience stored
             in your profile.
           </p>
+          {!isEmployer && premium ? (
+            <div className="action-panel">
+              <h4>Match breakdown</h4>
+              <p className="muted-text">Skills: {job.required_skills}</p>
+              <p className="muted-text">Preferred mode: {job.work_mode}</p>
+              <p className="muted-text">Location: {job.job_location}</p>
+              <p className="muted-text">Experience target: {job.years_of_experience}+ years</p>
+            </div>
+          ) : !isEmployer ? (
+            <div className="premium-locked">
+              <p className="stat-label">Premium insight</p>
+              <p className="muted-text">Upgrade to see why this role matches your profile.</p>
+            </div>
+          ) : null}
           <Link className="button-secondary" to="/profile">
             Update profile
           </Link>
@@ -123,14 +138,18 @@ function JobDetailPage() {
               <label className="field-label" htmlFor="application-resume">
                 Resume / CV
               </label>
-              <input
-                id="application-resume"
-                className="input"
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={(event) => handleResumeUpload(event.target.files?.[0])}
-              />
-              {resumeName ? <p className="success-text">Attached: {resumeName}</p> : null}
+              <label className="file-upload" htmlFor="application-resume">
+                <span className="file-upload-title">Upload resume / CV</span>
+                <span className="file-upload-copy">
+                  {resumeName || "PDF, DOC, or DOCX"}
+                </span>
+                <input
+                  id="application-resume"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(event) => handleResumeUpload(event.target.files?.[0])}
+                />
+              </label>
               <button className={applied ? "button-success" : "button-primary"} onClick={handleApply} disabled={applied || busy}>
                 {applied ? "Application submitted" : busy ? "Submitting..." : "Apply for this job"}
               </button>

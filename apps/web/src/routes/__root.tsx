@@ -74,6 +74,9 @@ function RootComponent() {
                         <Link className="profile-menu-link" to="/profile">
                           Profile
                         </Link>
+                        <Link className="profile-menu-link" to="/membership">
+                          Membership
+                        </Link>
                         <Link className="profile-menu-link" to="/settings">
                           Settings
                         </Link>
@@ -116,6 +119,7 @@ type AppRoutePath =
   | "/candidates"
   | "/hiring"
   | "/messages"
+  | "/membership"
   | "/profile"
   | "/settings"
   | "/sign-in";

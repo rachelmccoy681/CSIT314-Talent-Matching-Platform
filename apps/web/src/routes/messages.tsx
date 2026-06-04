@@ -13,7 +13,7 @@ import {
 import { getAccountType } from "@/lib/view-mode";
 import { supabase } from "@/utils/supabase";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const Route = createFileRoute("/messages")({
   beforeLoad: async () => {
@@ -46,6 +46,33 @@ function MessagesPage() {
     [messages],
   );
   const visibleMessages = messages.filter((message) => getMessageThreadId(message) === selectedThreadId);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    let active = true;
+
+    async function refreshMessages() {
+      const nextMessages = await loadMessages(user?.id);
+      if (!active) return;
+
+      setMessages(nextMessages);
+      setSelectedThreadId((currentThreadId) => {
+        if (currentThreadId && nextMessages.some((message) => getMessageThreadId(message) === currentThreadId)) {
+          return currentThreadId;
+        }
+        return nextMessages[0] ? getMessageThreadId(nextMessages[0]) : "";
+      });
+    }
+
+    const intervalId = window.setInterval(refreshMessages, 3000);
+    void refreshMessages();
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [user?.id]);
 
   async function attachFile(file?: File) {
     if (!file) return;
@@ -168,13 +195,18 @@ function MessagesPage() {
               onChange={(event) => setBody(event.target.value)}
               placeholder="Write a reply..."
             />
-            <input
-              className="input"
-              type="file"
-              accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
-              onChange={(event) => attachFile(event.target.files?.[0])}
-            />
-            {attachmentName ? <p className="success-text">Attached: {attachmentName}</p> : null}
+            <label className="file-upload" htmlFor="message-attachment">
+              <span className="file-upload-title">Attach a file</span>
+              <span className="file-upload-copy">
+                {attachmentName || "PDF, image, DOC, or DOCX"}
+              </span>
+              <input
+                id="message-attachment"
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
+                onChange={(event) => attachFile(event.target.files?.[0])}
+              />
+            </label>
             <button className="button-primary w-fit" type="button" onClick={reply}>
               Send reply
             </button>
