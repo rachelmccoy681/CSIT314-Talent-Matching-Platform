@@ -29,6 +29,9 @@ Make sure the web app has the correct Supabase URL and anon key configured for y
 
 From the web app folder:
 
+Eiher,
+Run Start.bat, or
+
 ```cmd
 npm run dev
 ```
